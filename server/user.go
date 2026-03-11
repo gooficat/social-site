@@ -1,16 +1,16 @@
 package main
 
 import (
+	"database/sql"
 	"errors"
 	"log"
-	"database/sql"
 )
 
 type User struct {
-	id int
-	name string
-	email string
-	handle string
+	id       int
+	name     string
+	email    string
+	handle   string
 	password string
 }
 
@@ -57,7 +57,7 @@ func GetUserByEmail(email string) *User {
 }
 
 func CreateUser(name string, handle string, email string, password string) {
-	_, err := db.Exec("INSERT INTO users (name, email, handle, password) VALUES ($1, $2, $3, $4)", name, email, handle, password)
+	_, err := db.Exec("INSERT INTO users (name, handle, email, password) VALUES ($1, $2, $3, $4)", name, handle, email, password)
 
 	if err != nil {
 		log.Fatal(err)

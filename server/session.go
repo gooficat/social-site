@@ -6,6 +6,10 @@ var (
 	sessions map[string]int
 )
 
+func InitSessions() {
+	sessions = make(map[string]int)
+}
+
 func CreateSession(user_id int) string {
 	session_id := uuid.New().String()
 	sessions[session_id] = user_id

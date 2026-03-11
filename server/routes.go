@@ -1,11 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 	"path"
-	"encoding/json"
+	"strings"
 )
 
 func ApiUser(w http.ResponseWriter, r *http.Request, rt []string) {
@@ -53,8 +53,8 @@ func WriteJson(w http.ResponseWriter, status int, data any) {
 
 func ApiUserLogin(w http.ResponseWriter, r *http.Request, rt []string) {
 	var body struct {
-		handle string `json:"handle"`
-		password string `json:"password"`
+		Handle   string `json:"handle"`
+		Password string `json:"password"`
 	}
 
 	err := json.NewDecoder(r.Body).Decode(&body)
@@ -65,10 +65,17 @@ func ApiUserLogin(w http.ResponseWriter, r *http.Request, rt []string) {
 		return
 	}
 
-	user := GetUserByHandle(body.handle)
+	user := GetUserByHandle(body.Handle)
 	if user == nil {
 		WriteJson(w, http.StatusBadRequest, map[string]any{
 			"message": "user does not exist",
+		})
+		return
+	}
+
+	if user.password != body.Password {
+		WriteJson(w, http.StatusBadRequest, map[string]any{
+			"message": "incorrect password",
 		})
 		return
 	}
@@ -80,11 +87,10 @@ func ApiUserLogin(w http.ResponseWriter, r *http.Request, rt []string) {
 
 func ApiUserRegister(w http.ResponseWriter, r *http.Request, rt []string) {
 	var body struct {
-		name string `json:"name"`
-		handle string `json:"handle"`
-		email string `json:"email"`
-
-		password string `json:"password"`
+		Name     string `json:"name"`
+		Handle   string `json:"handle"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
 	}
 
 	err := json.NewDecoder(r.Body).Decode(&body)
@@ -95,14 +101,21 @@ func ApiUserRegister(w http.ResponseWriter, r *http.Request, rt []string) {
 		return
 	}
 
-	user := GetUserByHandle(body.handle)
+	if body.Name == "" || body.Handle == "" || body.Email == "" || body.Password == "" {
+		WriteJson(w, http.StatusBadRequest, map[string]any{
+			"message": "All fields are required",
+		})
+		return
+	}
+
+	user := GetUserByHandle(body.Handle)
 	if user != nil {
 		WriteJson(w, http.StatusBadRequest, map[string]any{
 			"message": "user with that handle already exists",
 		})
 		return
 	}
-	user = GetUserByEmail(body.email)
+	user = GetUserByEmail(body.Email)
 	if user != nil {
 		WriteJson(w, http.StatusBadRequest, map[string]any{
 			"message": "user with that email already exists",
@@ -110,7 +123,10 @@ func ApiUserRegister(w http.ResponseWriter, r *http.Request, rt []string) {
 		return
 	}
 
-	newUser := CreateUser(body.name, body.handle, body.email, body.password)
+	CreateUser(body.Name, body.Handle, body.Email, body.Password)
+
+	newUser := GetUserByHandle(body.Handle)
+
 	WriteJson(w, http.StatusOK, map[string]any{
 		"session_id": CreateSession(newUser.id),
 	})
