@@ -17,7 +17,7 @@ type User struct {
 func GetUserByID(id int) *User {
 	var user User
 	err := db.QueryRow("SELECT id, name, email, handle, password FROM USERS WHERE id = $1", id).Scan(&user.id, &user.name, &user.email, &user.handle, &user.password)
-	
+
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil
 	}
@@ -31,14 +31,28 @@ func GetUserByID(id int) *User {
 func GetUserByHandle(handle string) *User {
 	var user User
 	err := db.QueryRow("SELECT id, name, email, handle, password FROM USERS WHERE handle = $1", handle).Scan(&user.id, &user.name, &user.email, &user.handle, &user.password)
-	
+
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil
 	}
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
+	return &user
+}
+
+func GetUserByEmail(email string) *User {
+	var user User
+	err := db.QueryRow("SELECT id, name, email, handle, password FROM USERS WHERE email = $1", email).Scan(&user.id, &user.name, &user.email, &user.handle, &user.password)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return &user
 }
 
