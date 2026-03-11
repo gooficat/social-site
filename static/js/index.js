@@ -9,3 +9,11 @@
 		el.textContent = handle.value;
 	});
 })();
+
+document.getElementById("logout").addEventListener("click", async (e) => {
+	e.preventDefault();
+	await cookieStore.delete({ name: "session_id", path: "/" });
+	await cookieStore.delete({ name: "handle", path: "/" });
+	await fetch("/api/user/logout", { method: "POST" });
+	window.location.href = "/sign.html";
+});
