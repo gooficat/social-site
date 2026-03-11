@@ -2,10 +2,11 @@ package main
 
 import (
 	"database/sql"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var	db *sql.DB
+var db *sql.DB
 
 func InitDb() {
 	var err error

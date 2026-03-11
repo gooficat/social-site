@@ -15,9 +15,11 @@ func ApiUser(w http.ResponseWriter, r *http.Request, rt []string) {
 	}
 	switch rt[0] {
 	case "login":
-		ApiUserLogin(w, r, rt[1:])
+		ApiUserLogin(w, r)
 	case "register":
-		ApiUserRegister(w, r, rt[1:])
+		ApiUserRegister(w, r)
+	case "logout":
+		ApiUserLogout(w, r)
 	default:
 		fmt.Fprintf(w, "Unknown path\n")
 	}
@@ -51,7 +53,7 @@ func WriteJson(w http.ResponseWriter, status int, data any) {
 	json.NewEncoder(w).Encode(data)
 }
 
-func ApiUserLogin(w http.ResponseWriter, r *http.Request, rt []string) {
+func ApiUserLogin(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		Handle   string `json:"handle"`
 		Password string `json:"password"`
@@ -85,7 +87,30 @@ func ApiUserLogin(w http.ResponseWriter, r *http.Request, rt []string) {
 	})
 }
 
-func ApiUserRegister(w http.ResponseWriter, r *http.Request, rt []string) {
+func ApiUserLogout(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		SessionId string `json:"session_id"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil || body.SessionId == "" {
+		WriteJson(w, http.StatusBadRequest, map[string]any{
+			"message": "malformed body",
+		})
+		return
+	}
+	err2 := DeleteSession(body.SessionId)
+	if err2 != 0 {
+		WriteJson(w, http.StatusBadRequest, map[string]any{
+			"message": "session does not exist",
+		})
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+}
+
+func ApiUserRegister(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		Name     string `json:"name"`
 		Handle   string `json:"handle"`
