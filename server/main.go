@@ -12,5 +12,5 @@ func main() {
 	CronJobs()
 
 	http.HandleFunc("/", Routes)
-	http.ListenAndServe(":3000", nil)
+	http.ListenAndServe(":8080", nil)
 }
