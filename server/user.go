@@ -56,10 +56,8 @@ func GetUserByEmail(email string) *User {
 	return &user
 }
 
-func CreateUser(name string, handle string, email string, password string) {
+func CreateUser(name string, handle string, email string, password string) error {
 	_, err := db.Exec("INSERT INTO users (name, handle, email, password) VALUES ($1, $2, $3, $4)", name, handle, email, password)
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	return err
 }

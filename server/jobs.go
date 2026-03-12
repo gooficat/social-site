@@ -13,8 +13,12 @@ func MidnightJob() {
 	SweepSessions()
 }
 
+// func HourlyJob() {
+// }
+
 func CronJobs() {
 	c := cron.New()
 	c.AddFunc("0 0 0 * * *", MidnightJob)
+	// c.AddFunc("0 * * * * *", HourlyJob)
 	c.Start()
 }

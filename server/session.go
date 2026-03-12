@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -12,12 +13,8 @@ type Session struct {
 }
 
 var (
-	sessions map[string]Session
+	sessions map[string]Session = make(map[string]Session)
 )
-
-func InitSessions() {
-	sessions = make(map[string]Session)
-}
 
 func CreateSession(user_id int) string {
 	session_id := uuid.New().String()
@@ -36,12 +33,12 @@ func GetUserId(session_id string) int {
 	return 0
 }
 
-func DeleteSession(session_id string) int8 {
+func DeleteSession(session_id string) error {
 	if _, ok := sessions[session_id]; !ok {
-		return 1
+		return fmt.Errorf("session not found")
 	}
 	delete(sessions, session_id)
-	return 0
+	return nil
 }
 
 func SweepSessions() {

@@ -99,14 +99,14 @@ func ApiUserLogout(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	err2 := DeleteSession(body.SessionId)
-	if err2 != 0 {
+	err = DeleteSession(body.SessionId)
+	if err != nil {
 		WriteJson(w, http.StatusBadRequest, map[string]any{
 			"message": "session does not exist",
 		})
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
+
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -148,11 +148,13 @@ func ApiUserRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	CreateUser(body.Name, body.Handle, body.Email, body.Password)
+	err = CreateUser(body.Name, body.Handle, body.Email, body.Password)
+	if err != nil {
+		WriteJson(w, http.StatusInternalServerError, map[string]any{
+			"message": "failed to create user",
+		})
+		return
+	}
 
-	newUser := GetUserByHandle(body.Handle)
-
-	WriteJson(w, http.StatusOK, map[string]any{
-		"session_id": CreateSession(newUser.id),
-	})
+	w.WriteHeader(http.StatusOK)
 }
