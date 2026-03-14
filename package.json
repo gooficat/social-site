@@ -14,6 +14,6 @@
     "start": "bun run src/server/index.ts"
   },
   "dependencies": {
-    "bun-modular-router": "./bun-modular-router/"
+    "bun-modular-router": "latest"
   }
 }
