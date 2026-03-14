@@ -1,23 +1,16 @@
 import router from 'bun-modular-router'
-import index from "../client/index.html"
+import routes from './routes/routes'
+import path from 'path'
+
+const clientPath = path.join(import.meta.dirname, "../client")
 
 Bun.serve({
 	port: 8080,
-	routes: router({
-		"/": index,
-		"/api": {
-			"/greet": () => new Response("Hello from the API!")
-		},
-		"/animals": {
-			"/feline": {
-				"/adult": () => new Response("Mraow!"),
-				"/kitten": () => new Response("mew!")
-			},
-			"/cow/:hasMilk": (req: Bun.BunRequest) =>
-			{
-				const hasMilk = req.params.hasMilk === "dairy"
-				return new Response("moo " + (hasMilk ? "(with milk)" : ""))
-			}
-		}
-	}),
+	routes: router(routes),
+	fetch(req)
+	{
+		let fpath = new URL(req.url).pathname
+		if (fpath[fpath.length - 1] == '/') fpath += "index.html"
+		return new Response(Bun.file(path.join(clientPath, fpath!)))
+	}
 })
