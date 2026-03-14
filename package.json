@@ -1,0 +1,19 @@
+{
+  "name": "social-site",
+  "module": "src/server/index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "scripts": {
+    "dev": "bun run --hot src/server/index.ts",
+    "start": "bun run src/server/index.ts"
+  },
+  "dependencies": {
+    "bun-modular-router": "./bun-modular-router/"
+  }
+}
