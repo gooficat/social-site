@@ -25,7 +25,6 @@ async function isValidSession(session: { userId: string, sessionId: string })
 	{
 		if (el.id == session.sessionId)
 		{
-			console.log("Element id: ", el.id)
 			match = true
 		}
 	})
