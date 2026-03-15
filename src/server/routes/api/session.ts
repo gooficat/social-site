@@ -10,6 +10,11 @@ async function createSession(userId: number)
 	return sessionId
 }
 
+async function deleteSession(session: { userId: number, sessionId: string })
+{
+	await db`DELETE FROM sessions WHERE userId = ${session.userId} AND id = ${session.sessionId}`
+}
+
 async function getSessions(userId: number)
 {
 	const session = await db`SELECT * FROM sessions WHERE userId = ${userId}`
@@ -31,5 +36,5 @@ async function isValidSession(session: { userId: string, sessionId: string })
 	return match
 }
 
-export { createSession, getSessions, isValidSession }
-export default { createSession, getSessions, isValidSession }
+export { createSession, getSessions, isValidSession, deleteSession }
+export default { createSession, getSessions, isValidSession, deleteSession }

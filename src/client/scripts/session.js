@@ -1,12 +1,13 @@
 async function sessionValid() {
 	const userIdCookie = await cookieStore.get("userId")
 	const sessionIdCookie = await cookieStore.get("sessionId")
+
+	if (!userIdCookie || !sessionIdCookie) return false
+
 	const sessionCookie = {
 		userId: userIdCookie.value,
 		sessionId: sessionIdCookie.value
 	}
-
-	console.log(sessionCookie)
 
 	const res = await fetch('/api/user/session-validate', {
 		method: 'POST',
@@ -15,8 +16,6 @@ async function sessionValid() {
 		},
 		body: JSON.stringify(sessionCookie)
 	})
-
-	console.log("Session ? ", res.ok)
 
 	return res.ok
 }

@@ -1,6 +1,6 @@
 import type { BunRequest } from "bun"
 import db from "../../db"
-import { createSession, getSessions, isValidSession } from "./session"
+import { createSession, deleteSession, getSessions, isValidSession } from "./session"
 
 async function login(req: Bun.BunRequest)
 {
@@ -62,11 +62,17 @@ async function validateSession(req: BunRequest)
 
 	if (isValid)
 	{
-		console.log("valid ", body)
 		return new Response(null, { status: 200 })
 	}
-	console.log("not valid ", body)
 	return new Response(null, { status: 400 })
+}
+
+async function logout(req: BunRequest)
+{
+	const body = await req.body?.json()
+	await deleteSession(body)
+	return new Response(null, { status: 200 })
+
 }
 
 export default {
@@ -75,6 +81,9 @@ export default {
 	},
 	"/register": {
 		POST: register
+	},
+	"/logout": {
+		POST: logout
 	},
 	"/session-validate": {
 		POST: validateSession
