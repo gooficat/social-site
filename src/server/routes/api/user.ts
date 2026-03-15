@@ -1,9 +1,10 @@
+import type { BunRequest } from "bun"
 import db from "../../db"
+import { createSession, getSessions, isValidSession } from "./session"
 
 async function login(req: Bun.BunRequest)
 {
 	const credentials = await req.body?.json()
-	console.log(credentials)
 
 	const storedUser = await db`
 			SELECT * FROM users WHERE handle = ${credentials.handle}
@@ -19,18 +20,16 @@ async function login(req: Bun.BunRequest)
 		return new Response("Incorrect password", { status: 400 })
 	}
 
-	console.log(storedUser)
 
 	return Response.json({
-		session_id: "placeholder session id",
-		user_id: storedUser[0].id
+		sessionId: await createSession(storedUser[0].id),
+		userId: storedUser[0].id
 	})
 }
 
 async function register(req: Bun.BunRequest)
 {
 	const credentials = await req.body?.json()
-	console.log(credentials)
 
 	const storedUser = await db`
 			SELECT * FROM users WHERE handle = ${credentials.handle}
@@ -50,9 +49,24 @@ async function register(req: Bun.BunRequest)
 			`
 
 	return Response.json({
-		session_id: "placeholder session id",
-		user_id: newUser[0].id
+		sessionId: await createSession(newUser[0].id),
+		userId: newUser[0].id
 	})
+}
+
+async function validateSession(req: BunRequest)
+{
+	const body = await req.body?.json()
+
+	const isValid = await isValidSession(body)
+
+	if (isValid)
+	{
+		console.log("valid ", body)
+		return new Response(null, { status: 200 })
+	}
+	console.log("not valid ", body)
+	return new Response(null, { status: 400 })
 }
 
 export default {
@@ -61,6 +75,9 @@ export default {
 	},
 	"/register": {
 		POST: register
+	},
+	"/session-validate": {
+		POST: validateSession
 	}
 }
 

@@ -17,7 +17,15 @@ form.addEventListener('submit', async (e) => {
 		},
 		body: JSON.stringify(credentials)
 	})
-	let session_id = await res.text()
 
-	console.log(session_id)
+	if (!res.ok) {
+		document.querySelector("#error").text = await res.text()
+		return
+	}
+	let json = await res.json()
+
+	cookieStore.set('userId', json.userId)
+	cookieStore.set('sessionId', json.sessionId)
+
+	window.location.href = "/"
 })
