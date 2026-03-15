@@ -15,5 +15,5 @@
 		await cookieStore.delete('userId')
 		await cookieStore.delete('sessionId')
 	}
-	window.location.href = "/"
+	window.location.href = "/login.html"
 })()
