@@ -19,3 +19,17 @@ async function sessionValid() {
 
 	return res.ok
 }
+
+async function storeUser(handle, userId, sessionId) {
+	sessionStorage.setItem('handle', handle)
+	await cookieStore.set('userId', userId)
+	await cookieStore.set('sessionId', sessionId)
+}
+
+async function clearUser() {
+	sessionStorage.clear()
+	await cookieStore.delete('userId')
+	await cookieStore.delete('sessionId')
+}
+
+export { sessionValid, storeUser, clearUser }

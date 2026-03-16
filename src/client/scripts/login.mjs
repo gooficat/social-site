@@ -1,3 +1,4 @@
+import { storeUser } from './session.mjs'
 
 let form = document.querySelector('#sign')
 form.addEventListener('submit', async (e) => {
@@ -18,8 +19,7 @@ form.addEventListener('submit', async (e) => {
 	}
 	let json = await res.json()
 
-	cookieStore.set('userId', json.userId)
-	cookieStore.set('sessionId', json.sessionId)
+	storeUser(credentials.handle, json.userId, json.sessionId)
 
 	window.location.href = "/"
 })

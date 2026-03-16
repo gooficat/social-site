@@ -1,3 +1,5 @@
+import { clearUser } from "./session.mjs"
+
 (async () => {
 	const sessionId = (await cookieStore.get('sessionId')).value
 	if (sessionId) {
@@ -12,8 +14,7 @@
 			})
 		})
 
-		await cookieStore.delete('userId')
-		await cookieStore.delete('sessionId')
+		await clearUser()
 	}
 	window.location.href = "/login.html"
 })()
